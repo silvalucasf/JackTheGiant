@@ -10,14 +10,14 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.projects.jackthegiant.GameMain;
 
+import background.ManagerBG;
 import helpers.GameInfo;
 
 public class Gameplay implements Screen {
     private GameMain game;
-    private Sprite[] bgs;
-
     private OrthographicCamera mainCamera;
     private Viewport gameViewport;
+    private ManagerBG managerBG;
 
     public Gameplay (GameMain game){
         this.game = game;
@@ -27,25 +27,12 @@ public class Gameplay implements Screen {
 
         gameViewport = new StretchViewport(GameInfo.WIDTH, GameInfo.HEIGHT, mainCamera);
 
-        createBG();
-    }
-
-    void createBG (){
-        bgs = new Sprite[3];
-        for (int i = 0; i < bgs.length; i++){
-            bgs[i] = new Sprite(new Texture("BG/Complete_static.png"));
-            bgs[i].setPosition(bgs[i].getWidth() * i, 0);
-        }
-    }
-
-    void drawBG (){
-        for (Sprite bg : bgs) {
-            game.getBatch().draw(bg, bg.getX(), bg.getY());
-        }
+        managerBG = new ManagerBG();
     }
 
     void update (float dt){
         moveCamera();
+        managerBG.update(mainCamera);
     }
 
     void moveCamera(){
@@ -54,7 +41,6 @@ public class Gameplay implements Screen {
 
     @Override
     public void show() {
-
     }
 
     @Override
@@ -65,10 +51,11 @@ public class Gameplay implements Screen {
         update(delta);
 
         game.getBatch().begin();
-        drawBG();
+        managerBG.draw(game.getBatch());
         game.getBatch().end();
 
         game.getBatch().setProjectionMatrix(mainCamera.combined);
+
         mainCamera.update();
     }
 
